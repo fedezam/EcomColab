@@ -1,128 +1,115 @@
 // app.js
 import { auth, db } from './firebase-config.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const registerBtn = document.getElementById('registerBtn');
-  const googleBtn = document.getElementById('googleBtn');
-  const loginBtn = document.getElementById('loginBtn');
-  const registerModal = document.getElementById('registerModal');
-  const closeModal = document.getElementById('closeModal');
-  const submitRegister = document.getElementById('submitRegister');
-  const toast = document.getElementById('toast');
-  const toastMessage = document.getElementById('toastMessage');
+// Elementos del DOM
+const registerBtn = document.getElementById('registerBtn');
+const googleBtn = document.getElementById('googleBtn');
+const loginBtn = document.getElementById('loginBtn');
+const registerModal = document.getElementById('registerModal');
+const closeModal = document.getElementById('closeModal');
+const submitRegister = document.getElementById('submitRegister');
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
+const closeToast = document.getElementById('closeToast'); // Botón para cerrar notificación
 
-  // Verificar si el usuario está autenticado
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      window.location.href = '/dashboard'; // Redirigir al dashboard
-    }
-  });
+// Verificar autenticación y redirigir si es necesario
+auth.onAuthStateChanged(user => {
+  if (user) {
+    window.location.href = '/dashboard';
+  }
+});
 
-  // Mostrar notificaciones
-  function showToast(message, isError = false) {
-    toastMessage.textContent = message;
-    toast.classList.remove('hidden');
-    toast.classList.toggle('bg-green-500', !isError);
-    toast.classList.toggle('bg-red-500', isError);
-    setTimeout(() => {
-      toast.classList.add('hidden');
-    }, 3000);
+// Mostrar notificaciones
+function showToast(message, isError = false) {
+  toastMessage.textContent = message;
+  toast.classList.remove('hidden');
+  toast.classList.toggle('bg-green-500', !isError);
+  toast.classList.toggle('bg-red-500', isError);
+}
+
+// Cerrar notificación manualmente
+closeToast.addEventListener('click', () => {
+  toast.classList.add('hidden');
+});
+
+// Abrir y cerrar modal de registro
+registerBtn.addEventListener('click', () => registerModal.classList.remove('hidden'));
+closeModal.addEventListener('click', () => registerModal.classList.add('hidden'));
+
+// Cerrar modal al hacer clic fuera de él
+window.addEventListener('click', (e) => {
+  if (e.target === registerModal) {
+    registerModal.classList.add('hidden');
+  }
+});
+
+// Registro manual
+submitRegister.addEventListener('click', async () => {
+  const nombre = document.getElementById('nombre').value.trim();
+  const apellido = document.getElementById('apellido').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  const password = document.getElementById('password').value;
+  const repeatPassword = document.getElementById('repeatPassword').value;
+
+  // Validación de campos vacíos
+  if (!nombre || !apellido || !email || !telefono || !password || !repeatPassword) {
+    showToast('Todos los campos son obligatorios', true);
+    return;
   }
 
-  // Abrir modal de registro manual
-  registerBtn.addEventListener('click', () => {
-    registerModal.classList.remove('hidden');
-  });
+  if (password !== repeatPassword) {
+    showToast('Las contraseñas no coinciden', true);
+    return;
+  }
 
-  // Cerrar modal de registro manual
-  closeModal.addEventListener('click', () => {
+  if (password.length < 6) {
+    showToast('La contraseña debe tener al menos 6 caracteres', true);
+    return;
+  }
+
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    // Guardar datos en Firestore
+    await db.collection('usuarios').doc(user.uid).set({
+      nombre,
+      apellido,
+      email,
+      telefono,
+    });
+
+    showToast('¡Registro exitoso!');
     registerModal.classList.add('hidden');
-  });
+  } catch (error) {
+    showToast('Error: ' + error.message, true);
+  }
+});
 
-  // Registro manual
-  submitRegister.addEventListener('click', async () => {
-    const nombre = document.getElementById('nombre').value;
-    const apellido = document.getElementById('apellido').value;
-    const email = document.getElementById('email').value;
-    const telefono = document.getElementById('telefono').value;
-    const password = document.getElementById('password').value;
-    const repeatPassword = document.getElementById('repeatPassword').value;
+// Registro con Google
+googleBtn.addEventListener('click', async () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
 
-    if (password !== repeatPassword) {
-      showToast('Las contraseñas no coinciden', true);
-      return;
-    }
-
-    if (password.length < 6) {
-      showToast('La contraseña debe tener al menos 6 caracteres', true);
-      return;
-    }
-
-    try {
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
-
-      // Guardar datos en Firestore
+    // Guardar datos en Firestore si es un nuevo usuario
+    const userDoc = await db.collection('usuarios').doc(user.uid).get();
+    if (!userDoc.exists) {
       await db.collection('usuarios').doc(user.uid).set({
-        nombre,
-        apellido,
-        email,
-        telefono,
-      });
-
-      showToast('¡Registro exitoso!');
-      registerModal.classList.add('hidden');
-    } catch (error) {
-      showToast('Error: ' + error.message, true);
-    }
-  });
-
-  // Registro con Google
-  googleBtn.addEventListener('click', async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-      const result = await auth.signInWithPopup(provider);
-      const user = result.user;
-
-      // Guardar datos en Firestore
-      await db.collection('usuarios').doc(user.uid).set({
-        nombre: user.displayName,
+        nombre: user.displayName || '',
         email: user.email,
       });
-
-      showToast('¡Inicio de sesión con Google exitoso!');
-    } catch (error) {
-      showToast('Error: ' + error.message, true);
     }
-  });
 
-  // Botón de login
-  loginBtn.addEventListener('click', () => {
-    window.location.href = '/login'; // Redirigir a la página de login
-  });
-
-  // Cerrar modal al hacer clic fuera
-  window.addEventListener('click', (e) => {
-    if (e.target === registerModal) {
-      registerModal.classList.add('hidden');
-    }
-  });
-
-
-  // formulario registro
+    showToast('¡Inicio de sesión con Google exitoso!');
+  } catch (error) {
+    showToast('Error: ' + error.message, true);
+  }
 });
-document.addEventListener("DOMContentLoaded", function () {
-    const registerBtn = document.getElementById("registerBtn");
-    const registerModal = document.getElementById("registerModal");
-    const closeModal = document.getElementById("closeModal");
 
-    // Mostrar el formulario de registro al hacer clic en "Registro Manual"
-    registerBtn.addEventListener("click", function () {
-        registerModal.classList.remove("hidden");
-    });
-
-    // Ocultar el formulario cuando se hace clic en "Cancelar"
-    closeModal.addEventListener("click", function () {
-        registerModal.classList.add("hidden");
-    });
+// Redirigir a login
+loginBtn.addEventListener('click', () => {
+  window.location.href = '/login';
 });
