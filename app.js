@@ -107,4 +107,22 @@ document.addEventListener('DOMContentLoaded', () => {
       registerModal.classList.add('hidden');
     }
   });
+
+
+  // formulario registro
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const registerBtn = document.getElementById("registerBtn");
+    const registerModal = document.getElementById("registerModal");
+    const closeModal = document.getElementById("closeModal");
+
+    // Mostrar el formulario de registro al hacer clic en "Registro Manual"
+    registerBtn.addEventListener("click", function () {
+        registerModal.classList.remove("hidden");
+    });
+
+    // Ocultar el formulario cuando se hace clic en "Cancelar"
+    closeModal.addEventListener("click", function () {
+        registerModal.classList.add("hidden");
+    });
 });
