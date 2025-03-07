@@ -1,101 +1,105 @@
-/* styles.css */
+/* Definir variables de colores */
+:root {
+  --primary: #4F46E5;
+  --secondary: #6366F1;
+  --text-color: #333;
+  --bg-light: #f9f9f9;
+  --white: #fff;
+}
 
+/* Estilos generales */
 body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, var(--white), var(--bg-light));
   min-height: 100vh;
-  background: linear-gradient(to bottom, white, #f9fafb);
-  font-family: sans-serif;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .container {
   max-width: 400px;
   width: 100%;
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: var(--white);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 h1 {
-  font-family: 'Pacifico', cursive;
-  font-size: 2rem;
-  color: #4F46E5;
-  margin-bottom: 1rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 1rem;
+  font-size: 24px;
+  color: var(--primary);
+  margin-bottom: 10px;
 }
 
 p {
-  color: #4b5563;
-  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  margin-bottom: 20px;
 }
 
+/* Botones */
 button {
   width: 100%;
-  padding: 0.75rem;
-  font-size: 1rem;
-  font-weight: bold;
+  padding: 12px;
+  margin: 5px 0;
   border: none;
   border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: #3b38c8;
+}
+
+.btn-secondary {
+  background: var(--white);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-light);
+}
+
+/* Modal oculto */
+#registerModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
 }
 
-.button-primary {
-  background: #4F46E5;
-  color: white;
-}
-.button-primary:hover {
-  background: #6366F1;
-}
-
-.button-outline {
-  background: white;
-  color: #4F46E5;
-  border: 1px solid #4F46E5;
-}
-.button-outline:hover {
-  background: #f3f4f6;
+.modal-content {
+  background: var(--white);
+  padding: 20px;
+  border-radius: 8px;
+  width: 350px;
+  text-align: center;
 }
 
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: none;
-}
-
-.input-field {
+input {
   width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.toast {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  background: #10b981;
-  color: white;
-  padding: 1rem;
-  border-radius: 8px;
+/* Ocultar toast */
+#toast {
   display: none;
 }
