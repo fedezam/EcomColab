@@ -1,81 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Permissions-Policy" content="interest-cohort=()">
-<title>Bienvenido</title>
-<link rel="stylesheet" href="styles.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
-<style>
-:where([class^="ri-"])::before { content: "\f3c2"; }
-</style>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="min-h-screen bg-gradient-to-b from-white to-gray-50">
-<div class="min-h-screen flex flex-col items-center justify-center px-4">
-<div class="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-lg">
-<div class="text-center">
-<h1 class="font-['Pacifico'] text-4xl text-primary mb-2">logo</h1>
-<h2 class="text-3xl font-bold text-gray-900 mb-4">¡Bienvenido a Nuestra Plataforma!</h2>
-<p class="text-gray-600 mb-8">Descubre un mundo de posibilidades. Para continuar explorando, necesitas registrarte en nuestra plataforma.</p>
-</div>
-<div class="space-y-4">
-<button id="registerBtn" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-button text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer" onclick="showRegisterModal()">
-<i class="ri-user-add-line mr-2 w-5 h-5 flex items-center justify-center"></i>
-Registro Manual
-</button>
-<button id="googleBtn" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-base font-medium rounded-button text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
-<i class="ri-google-fill mr-2 w-5 h-5 flex items-center justify-center text-red-500"></i>
-Continuar con Google
-</button>
-<button id="loginBtn" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-button text-primary bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
-<i class="ri-login-box-line mr-2 w-5 h-5 flex items-center justify-center"></i>
-Iniciar Sesión
-</button>
-</div>
-</div>
-</div>
+    <div class="min-h-screen flex flex-col items-center justify-center px-4">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-lg">
+            <div class="text-center">
+                <h1 class="font-['Pacifico'] text-4xl text-primary mb-2">logo</h1>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">¡Bienvenido a Nuestra Plataforma!</h2>
+                <p class="text-gray-600 mb-8">Descubre un mundo de posibilidades. Para continuar explorando, necesitas registrarte en nuestra plataforma.</p>
+            </div>
+            <div class="space-y-4">
+                <button id="registerBtn" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-button text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
+                    <i class="ri-user-add-line mr-2 w-5 h-5 flex items-center justify-center"></i>
+                    Registro Manual
+                </button>
+                <button id="googleBtn" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-base font-medium rounded-button text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
+                    <i class="ri-google-fill mr-2 w-5 h-5 flex items-center justify-center text-red-500"></i>
+                    Continuar con Google
+                </button>
+                <button id="loginBtn" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-button text-primary bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
+                    <i class="ri-login-box-line mr-2 w-5 h-5 flex items-center justify-center"></i>
+                    Iniciar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
 
-<!-- Modal de registro manual -->
-<div id="registerModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-<div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
-<div class="flex flex-col space-y-4">
-<h3 class="text-2xl font-bold text-gray-900">Registro Manual</h3>
-<input type="text" id="nombre" placeholder="Nombre" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
-<input type="text" id="apellido" placeholder="Apellido" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
-<input type="email" id="email" placeholder="Correo electrónico" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
-<input type="tel" id="telefono" placeholder="Teléfono" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
-<input type="password" id="password" placeholder="Contraseña" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
-<input type="password" id="repeatPassword" placeholder="Repetir contraseña" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
-<button id="submitRegister" class="w-full py-2 px-4 bg-primary text-white rounded-button hover:bg-primary/90 cursor-pointer">Registrarse</button>
-<button id="closeModal" class="w-full py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50 cursor-pointer" onclick="hideRegisterModal()">Cancelar</button>
-</div>
-</div>
-</div>
+    <!-- Modal de registro manual -->
+    <div id="registerModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+            <div class="flex flex-col space-y-4">
+                <h3 class="text-2xl font-bold text-gray-900">Registro Manual</h3>
+                <input type="text" id="nombre" placeholder="Nombre" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="text" id="apellido" placeholder="Apellido" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="email" id="email" placeholder="Correo electrónico" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="tel" id="telefono" placeholder="Teléfono" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="password" id="password" placeholder="Contraseña" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="password" id="repeatPassword" placeholder="Repetir contraseña" class="px-4 py-2 border rounded-button focus:outline-none focus:ring-2 focus:ring-primary">
+                <button id="submitRegister" class="w-full py-2 px-4 bg-primary text-white rounded-button hover:bg-primary/90 cursor-pointer">Registrarse</button>
+                <button id="closeModal" class="w-full py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50 cursor-pointer">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-<!-- Toast de notificaciones -->
-<div id="toast" class="hidden fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
-<p id="toastMessage"></p>
-</div>
+    <!-- Toast de notificaciones -->
+    <div id="toast" class="hidden fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+        <p id="toastMessage"></p>
+    </div>
 
-<!-- Scripts -->
-<script src="firebase-config.js" type="module"></script>
-<script src="app.js" type="module"></script>
-<script>
-function showRegisterModal() {
-    document.getElementById('registerModal').classList.remove('hidden');
-}
-
-function hideRegisterModal() {
-    document.getElementById('registerModal').classList.add('hidden');
-}
-</script>
+    <!-- Cargar index.js como módulo -->
+    <script src="index.js" type="module"></script>
 </body>
 </html>
