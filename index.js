@@ -5,13 +5,6 @@ import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
-// Elementos del DOM
-const walletInput = document.getElementById("wallet-address");
-const saveWalletButton = document.getElementById("save-wallet");
-const continueButton = document.getElementById("continue-tasks");
-const welcomeMessage = document.getElementById("welcome-message");
-const tqcBalance = document.getElementById("tqc-balance");
-
 // Verificar el estado de autenticación
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -33,18 +26,6 @@ async function loadUserData(uid) {
     tqcBalance.textContent = userData.balance || "0";
   }
 }
-
-// Guardar la dirección de la wallet
-saveWalletButton.addEventListener("click", async () => {
-  const user = auth.currentUser;
-  if (user) {
-    await updateDoc(doc(db, "usuarios", user.uid), {
-      wallet: walletInput.value.trim(),
-    });
-    alert("Wallet actualizada correctamente");
-  } else {
-    alert("Usuario no autenticado");
-  }
 });
 
 
