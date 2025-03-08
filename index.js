@@ -1,6 +1,14 @@
-import { auth, db } from './firebase-config.js';
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+// Importar módulos de Firebase
+import { auth, db } from "./firebase-config.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+const walletInput = document.getElementById("wallet-address");
+const saveWalletButton = document.getElementById("save-wallet");
+const continueButton = document.getElementById("continue-tasks");
+const welcomeMessage = document.getElementById("welcome-message");
+const tqcBalance = document.getElementById("tqc-balance");
+
 
 // Elementos del DOM
 const registerBtn = document.getElementById('registerBtn');
