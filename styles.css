@@ -16,6 +16,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  margin: 0;
 }
 
 .container {
@@ -48,6 +49,7 @@ button {
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-primary {
@@ -69,18 +71,21 @@ button {
   background: var(--bg-light);
 }
 
-/* Modal oculto */
+/* Modal */
 #registerModal {
-  display: none;
+  display: none; /* Oculto por defecto */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#registerModal.visible {
+  display: flex; /* Visible cuando se añade la clase "visible" */
 }
 
 .modal-content {
@@ -89,6 +94,7 @@ button {
   border-radius: 8px;
   width: 350px;
   text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 input {
@@ -97,9 +103,30 @@ input {
   margin: 5px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-size: 14px;
 }
 
-/* Ocultar toast */
+/* Toast */
 #toast {
   display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos adicionales para el botón de cerrar modal */
+#closeModal {
+  background: var(--white);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+#closeModal:hover {
+  background: var(--bg-light);
 }
