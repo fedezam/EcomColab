@@ -1,13 +1,51 @@
-// Importar módulos de Firebase
+// Importar auth y db desde firebase-config.js
 import { auth, db } from "./firebase-config.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+
+// Importar funciones específicas de Firebase desde la CDN
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
+// Elementos del DOM
 const walletInput = document.getElementById("wallet-address");
 const saveWalletButton = document.getElementById("save-wallet");
 const continueButton = document.getElementById("continue-tasks");
 const welcomeMessage = document.getElementById("welcome-message");
 const tqcBalance = document.getElementById("tqc-balance");
+
+// Verificar el estado de autenticación
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Usuario autenticado
+    welcomeMessage.textContent = `Bienvenido, ${user.email}`;
+    loadUserData(user.uid); // Cargar datos del usuario
+  } else {
+    // Usuario no autenticado
+    window.location.href = "/login"; // Redirigir al login
+  }
+});
+
+// Función para cargar datos del usuario
+async function loadUserData(uid) {
+  const userDoc = await getDoc(doc(db, "usuarios", uid));
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    walletInput.value = userData.wallet || "";
+    tqcBalance.textContent = userData.balance || "0";
+  }
+}
+
+// Guardar la dirección de la wallet
+saveWalletButton.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (user) {
+    await updateDoc(doc(db, "usuarios", user.uid), {
+      wallet: walletInput.value.trim(),
+    });
+    alert("Wallet actualizada correctamente");
+  } else {
+    alert("Usuario no autenticado");
+  }
+});
 
 
 // Elementos del DOM
