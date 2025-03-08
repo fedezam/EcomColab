@@ -11,7 +11,6 @@ const closeModal = document.getElementById('closeModal');
 const submitRegister = document.getElementById('submitRegister');
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toastMessage');
-const closeToast = document.getElementById('closeToast'); // Puede no existir en HTML
 
 // Asegurar que el modal de registro esté oculto al inicio
 document.addEventListener("DOMContentLoaded", () => {
@@ -37,6 +36,7 @@ function showToast(message, isError = false) {
 }
 
 // Cerrar notificación manualmente (verifica si el botón existe)
+const closeToast = document.getElementById('closeToast');
 if (closeToast) {
     closeToast.addEventListener('click', () => {
         toast.classList.add('hidden');
