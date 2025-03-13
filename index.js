@@ -34,7 +34,7 @@ document.getElementById("googleBtn").addEventListener("click", async () => {
         const result = await signInWithPopup(auth, googleProvider);
         await saveUserToFirestore(result.user);
         alert("Inicio de sesión con Google exitoso.");
-        window.location.replace("home.html");
+        window.location.replace("dashboard.html");
     } catch (error) {
         console.error("❌ Error con Google:", error);
         alert("Error: " + error.message);
