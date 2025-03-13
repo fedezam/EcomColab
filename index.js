@@ -28,7 +28,7 @@ const saveUserToFirestore = async (user, additionalData = {}) => {
     }
 };
 
-// 📌 Registro con Google (corrigiendo el ID del botón)
+// 📌 Registro con Google (modificado para usar el ID "googleBtn")
 document.getElementById("googleBtn").addEventListener("click", async () => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
@@ -41,21 +41,13 @@ document.getElementById("googleBtn").addEventListener("click", async () => {
     }
 });
 
-// 📌 Registro manual con email y contraseña (ajustando los IDs)
-document.getElementById("submitRegister").addEventListener("click", async (event) => {
-    event.preventDefault();
-    
+// 📌 Registro manual con email y contraseña (modificado para usar el botón "submitRegister")
+document.getElementById("submitRegister").addEventListener("click", async () => {
+    // Aquí puedes agregar validaciones adicionales (por ejemplo, comparar password y repeatPassword)
     const nombre = document.getElementById("nombre").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const repeatPassword = document.getElementById("repeatPassword").value;
     const telefono = document.getElementById("telefono").value;
-
-    // Verificar que las contraseñas coincidan
-    if (password !== repeatPassword) {
-        alert("❌ Las contraseñas no coinciden.");
-        return;
-    }
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -68,19 +60,18 @@ document.getElementById("submitRegister").addEventListener("click", async (event
     }
 });
 
-// 📌 Abrir y cerrar modal de registro
-document.getElementById("registerBtn").addEventListener("click", () => {
-    document.getElementById("registerModal").classList.remove("hidden");
-});
-
-document.getElementById("closeModal").addEventListener("click", () => {
-    document.getElementById("registerModal").classList.add("hidden");
-});
-
 // 📌 Detectar cambios en la autenticación
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         console.log("✅ Usuario autenticado:", user);
         await saveUserToFirestore(user);
     }
+});
+
+// Opcional: Código para abrir y cerrar el modal de registro
+document.getElementById("registerBtn").addEventListener("click", () => {
+    document.getElementById("registerModal").classList.remove("hidden");
+});
+document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("registerModal").classList.add("hidden");
 });
