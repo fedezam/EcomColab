@@ -53,7 +53,7 @@ document.getElementById("submitRegister").addEventListener("click", async () => 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await saveUserToFirestore(userCredential.user, { nombre, telefono });
         alert("Registro exitoso.");
-        window.location.replace("home.html");
+        window.location.replace("dashboard.html");
     } catch (error) {
         console.error("❌ Error en el registro:", error);
         alert("Error: " + error.message);
