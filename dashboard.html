@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Anuncios P-TQC</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase App (base) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1>Sistema de Anuncios P-TQC</h1>
+            </div>
+            <div class="navbar-end">
+                <div id="user-info" class="hidden">
+                    <span>Bienvenido, <span id="user-name">Cargando...</span></span>
+                    <span class="tqc-balance">P-TQC: <span id="user-tqc">0</span></span>
+                </div>
+                <div id="auth-buttons">
+                    <button id="login-btn" class="btn btn-primary">Iniciar Sesión</button>
+                    <button id="register-btn" class="btn btn-secondary">Registrarse</button>
+                    <button id="logout-btn" class="btn btn-secondary hidden">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <div id="auth-container" class="auth-forms">
+            <div id="login-form" class="auth-form hidden">
+                <h2>Iniciar Sesión</h2>
+                <form id="login-form-elements">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                    <button type="button" id="back-login" class="btn btn-secondary">Volver</button>
+                </form>
+            </div>
+            <div id="register-form" class="auth-form hidden">
+                <h2>Registrarse</h2>
+                <form id="register-form-elements">
+                    <div class="form-group">
+                        <label for="register-name">Nombre</label>
+                        <input type="text" id="register-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Contraseña</label>
+                        <input type="password" id="register-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrarse</button>
+                    <button type="button" id="back-register" class="btn btn-secondary">Volver</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="anuncios-container" class="anuncios-grid hidden">
+            <h2>Anuncios Disponibles</h2>
+            <div id="anuncios-list" class="anuncios-list">
+                <!-- Los anuncios se cargarán dinámicamente aquí -->
+                <div class="loading-spinner">Cargando anuncios...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification hidden"></div>
+
+    <script src="index.js"></script>
+</body>
+</html>
