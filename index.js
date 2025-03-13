@@ -1,153 +1,86 @@
-// Importar auth y db desde firebase-config.js
-import { auth, db } from "./firebase-config.js";
+// Importamos los módulos de Firebase
+import { auth, db, googleProvider } from "./firebase-config.js";
+import { getAuth, signInWithPopup, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
-// Importar funciones específicas de Firebase desde la CDN
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+// 📌 Función para guardar el usuario en Firestore
+const saveUserToFirestore = async (user, additionalData = {}) => {
+    if (!user) return;
+    try {
+        const userRef = doc(db, "usuarios", user.uid);
+        const userDoc = await getDoc(userRef);
 
-// Verificar el estado de autenticación
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // Usuario autenticado
-    welcomeMessage.textContent = `Bienvenido, ${user.email}`;
-    loadUserData(user.uid); // Cargar datos del usuario
-  } else {
-    // Usuario no autenticado
-    window.location.href = "/login"; // Redirigir al login
-  }
-});
+        if (!userDoc.exists()) {
+            await setDoc(userRef, {
+                uid: user.uid,
+                nombre: user.displayName || additionalData.nombre || "Usuario",
+                email: user.email,
+                telefono: additionalData.telefono || "",
+                foto: user.photoURL || "",
+                tqc: 0
+            });
+            console.log("✅ Usuario guardado en Firestore.");
+        } else {
+            console.log("ℹ️ El usuario ya existía en Firestore.");
+        }
+    } catch (error) {
+        console.error("❌ Error al guardar en Firestore:", error);
+    }
+};
 
-// Función para cargar datos del usuario
-async function loadUserData(uid) {
-  const userDoc = await getDoc(doc(db, "usuarios", uid));
-  if (userDoc.exists()) {
-    const userData = userDoc.data();
-    walletInput.value = userData.wallet || "";
-    tqcBalance.textContent = userData.balance || "0";
-  }
-}
-});
-
-
-// Elementos del DOM
-const registerBtn = document.getElementById('registerBtn');
-const googleBtn = document.getElementById('googleBtn');
-const loginBtn = document.getElementById('loginBtn');
-const registerModal = document.getElementById('registerModal');
-const closeModal = document.getElementById('closeModal');
-const submitRegister = document.getElementById('submitRegister');
-const toast = document.getElementById('toast');
-const toastMessage = document.getElementById('toastMessage');
-
-// Asegurar que el modal de registro esté oculto al inicio
-document.addEventListener("DOMContentLoaded", () => {
-    registerModal.classList.add('hidden');
-});
-
-// Verificar autenticación y redirigir si el usuario ya está logueado
-auth.onAuthStateChanged(user => {
-    if (user) {
-        window.location.href = '/dashboard';
+// 📌 Registro con Google (corrigiendo el ID del botón)
+document.getElementById("googleBtn").addEventListener("click", async () => {
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        await saveUserToFirestore(result.user);
+        alert("Inicio de sesión con Google exitoso.");
+        window.location.replace("home.html");
+    } catch (error) {
+        console.error("❌ Error con Google:", error);
+        alert("Error: " + error.message);
     }
 });
 
-// Función para mostrar notificaciones
-function showToast(message, isError = false) {
-    toastMessage.textContent = message;
-    toast.classList.remove('hidden');
-    toast.classList.toggle('bg-green-500', !isError);
-    toast.classList.toggle('bg-red-500', isError);
+// 📌 Registro manual con email y contraseña (ajustando los IDs)
+document.getElementById("submitRegister").addEventListener("click", async (event) => {
+    event.preventDefault();
+    
+    const nombre = document.getElementById("nombre").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const repeatPassword = document.getElementById("repeatPassword").value;
+    const telefono = document.getElementById("telefono").value;
 
-    // Ocultar automáticamente después de 3 segundos
-    setTimeout(() => toast.classList.add('hidden'), 3000);
-}
-
-// Cerrar notificación manualmente (verifica si el botón existe)
-const closeToast = document.getElementById('closeToast');
-if (closeToast) {
-    closeToast.addEventListener('click', () => {
-        toast.classList.add('hidden');
-    });
-}
-
-// Abrir y cerrar modal de registro
-registerBtn.addEventListener('click', () => registerModal.classList.remove('hidden'));
-closeModal.addEventListener('click', () => registerModal.classList.add('hidden'));
-
-// Cerrar modal al hacer clic fuera de él
-window.addEventListener('click', (e) => {
-    if (e.target === registerModal) {
-        registerModal.classList.add('hidden');
-    }
-});
-
-// Registro manual con Firebase Auth y Firestore
-submitRegister.addEventListener('click', async () => {
-    const nombre = document.getElementById('nombre').value.trim();
-    const apellido = document.getElementById('apellido').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const telefono = document.getElementById('telefono').value.trim();
-    const password = document.getElementById('password').value;
-    const repeatPassword = document.getElementById('repeatPassword').value;
-
-    // Validación de campos vacíos
-    if (!nombre || !apellido || !email || !telefono || !password || !repeatPassword) {
-        showToast('Todos los campos son obligatorios', true);
-        return;
-    }
-
+    // Verificar que las contraseñas coincidan
     if (password !== repeatPassword) {
-        showToast('Las contraseñas no coinciden', true);
-        return;
-    }
-
-    if (password.length < 6) {
-        showToast('La contraseña debe tener al menos 6 caracteres', true);
+        alert("❌ Las contraseñas no coinciden.");
         return;
     }
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        // Guardar datos en Firestore
-        await setDoc(doc(db, 'usuarios', user.uid), {
-            nombre,
-            apellido,
-            email,
-            telefono,
-        });
-
-        showToast('¡Registro exitoso!');
-        registerModal.classList.add('hidden');
+        await saveUserToFirestore(userCredential.user, { nombre, telefono });
+        alert("Registro exitoso.");
+        window.location.replace("home.html");
     } catch (error) {
-        showToast('Error: ' + error.message, true);
+        console.error("❌ Error en el registro:", error);
+        alert("Error: " + error.message);
     }
 });
 
-// Registro con Google
-googleBtn.addEventListener('click', async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-
-        // Verificar si el usuario ya existe en Firestore
-        const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
-        if (!userDoc.exists()) {
-            await setDoc(doc(db, 'usuarios', user.uid), {
-                nombre: user.displayName || '',
-                email: user.email,
-            });
-        }
-
-        showToast('¡Inicio de sesión con Google exitoso!');
-    } catch (error) {
-        showToast('Error: ' + error.message, true);
-    }
+// 📌 Abrir y cerrar modal de registro
+document.getElementById("registerBtn").addEventListener("click", () => {
+    document.getElementById("registerModal").classList.remove("hidden");
 });
 
-// Redirigir a login
-loginBtn.addEventListener('click', () => {
-    window.location.href = '/login';
+document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("registerModal").classList.add("hidden");
+});
+
+// 📌 Detectar cambios en la autenticación
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        console.log("✅ Usuario autenticado:", user);
+        await saveUserToFirestore(user);
+    }
 });
